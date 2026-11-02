@@ -1,165 +1,193 @@
 meta {
  name Razomy Notation
- version 0.1.0
+ version 0.3.0
  extension ".rn"
- schema Md
+ type Md
  tags (
   ONTOLOGICAL-DATA
   RL-ISOMORPHIC-LAYER-0
-  SCHEMA-AGNOSTIC-CORE
-  SCHEMA-PORTALS
-  SYMMETRIC-TRIAD
-  INDENT-TOPOLOGICAL
-  COLUMN-ZERO-STRINGS
-  STREAM-ROOT-DEFAULT
+  TYPE-AGNOSTIC-CORE
+  TYPE-CONSTRUCTORS
+  SYMMETRIC-PENTAD
+  ADAPTIVE-INDENT-QUANTUM
+  AUTO-CLOSED-DELIMITERS
+  UNIFIED-NONE
+
+
+part FORMAL VOCABULARY (THE 7 ORTHOGONAL CONCEPTS)
+
+Every construct in Razomy Notation (`.rn`) and Razomy Language (`.rl`) is derived from seven orthogonal concepts:
+
+vocabulary (
+ Concept, Syntax, Ontological Definition
+ 1. Node, `Key Value`, The universal AST unit: a `Key` (left of space) bound to a `Value` (right of space).
+ 2. Key, `id` / `a.b` / `'sym` / `"str"`, The variable, field, or tag identifier (`snake_case` by convention). Can carry attached metadata `Key{Props}(Slots)`.
+ 3. Value, `Type? Pentad` | `Scalar`, The payload assigned to a `Key` (either one of the 5 Pentad structures or an atomic Scalar).
+ 4. Type, `Md` / `Sql` / `Date` / `Uuid`, A `PascalCase` archetype. Attached with NO space (`Sql(`, `Html[`, `Scss{`, `Date"`), it acts as a **Type Constructor** that parses/validates the inner structure.
+ 5. Pentad, `[` `{` `(` `"` `#`, The 5 structural delimiters: `[` Stream, `{` Form, `(` Tuple, `"` Raw, and `#` Comment.
+ 6. Scalar, `None` / `true` / `42` / `'pk`, Atomic literals inside `{` and `(`: `None`, `Bool`, `Num`, `Sym`, `Str`.
+ 7. Algebra, `&` / `^` / `/`, Space-surrounded operators between `Key` and `Value` for merging (`&`), symmetric difference (`^`), and key stripping (`/`).
 
 
 part AXIOMATIC SPECIFICATION (LAYER 0 — DEDUCTIVE HIERARCHY)
 
-section AXIOM I: THE STREAM ROOT (ONTOLOGICAL CONTINUUM)
+section AXIOM I: THE STREAM ROOT & ROOT TYPE BINDING
 
 Razomy Notation (`.rn`) is an ontological data and markup notation that serves as the isomorphic Layer 0 substrate of the Razomy Language (`.rl`).
 
 ul [
- b[Universal Stream Root] — Every `.rn` file begins as an implicit Stream `[]` at indentation level 0. Free text, outliner trees, markup nodes, and structured data blocks (`config {`) coexist in a single continuum right from line 1.
- b[Root Schema Binding] — Compound extensions (`*.md.rn`, `*.json.rn`, `*.scss.rn`, `*.sql.rn`, `*.rl`) bind a file-level Schema adapter (or the `.rl` compiler) directly to the root stream.
+ b[Universal Stream Root] — Every `.rn` file begins as an implicit Stream `[` at indentation level 0. Free text, outliner trees, markup nodes, and structured data blocks (`config {`) coexist in a single continuum right from line 1.
+ b[Type-Agnostic Core vs. Type Constructors] — The `.rn` core parser has zero hardcoded domain keywords. Compound file extensions (`*.md.rn`, `*.json.rn`, `*.rl`) or inline Type Constructors (`Md[`, `Sql(`, `Html[`, `Scss{`, `Json"`) bind a `PascalCase` Type to the AST subtree (for example, the `Md` type interprets `title`, `part`, `section`, `topic` lines as document headings).
 
 
-section AXIOM II: SPATIAL TOPOLOGY (INLINE VS. BLOCK — ONE RULE FOR ALL BRACKETS)
+section AXIOM II: SPATIAL TOPOLOGY (ONE LAW FOR `[`, `{`, `(`, `#`)
 
-All three structural brackets (`[]`, `{}`, `()`) obey one invariant topological rule based on where the opening bracket is placed:
+All structural delimiters (`[`, `{`, `(`, `#`) obey one universal topological law — explicit closing tokens at the end of a line or block are NEVER required:
 
-topic Inline Mode (Same-Line Closure)
-If `{`, `(`, or `[` opens and closes on the same line:
+topic 1. Inline Mode (Same-Line Payload -> Auto-Close at EOL)
+If content follows `[`, `{`, `(`, or `#` on the same line, it is an Inline construct:
 ul [
- Inside `{}` and `()`, elements are separated by `,` (surrounding whitespace is ignored): `env { A 1, B 2 }`, `pt (10, 20)`.
- Inside `[...]`, content is a continuous text/markup flow (in `.rn`) or inline pipeline (in `.rl`), with a single leading and single trailing space trimmed: `h1 [ Hello ]`, `span{class hi}[text]`.
+ b[EOL Auto-Closure] — Reaching the end of the line (`\n`) automatically closes any open inline `[`, `{`, `(`, or `#`:
+  `h1 [ Why Razomy?`
+  `env { NODE_ENV production, PORT 8080`
+  `cmd (node, server.js`
+  `# Inline homoiconic comment auto-closed at EOL`
+ b[Mid-Line Explicit Closure] — A closing `]`, `}`, or `)` is only required when another token or comma follows on the SAME line: `Read b[this] now`, `pt (10, 20), { a 1 }`.
+ b[Separators] — Inside inline `{` and `(`, elements are separated by `,`. Inside `[` and `#`, content is continuous text flow.
 
-topic Block Mode (End-of-Line Open, Topological Auto-Close)
-If a space-preceded `{`, `(`, or `[` is the LAST token on a line (ignoring trailing comments), it opens an indented block:
+topic 2. Block Mode (End-of-Line Open -> Dedent Auto-Close)
+If `[`, `{`, `(`, or `#` (or a Type Constructor `Type[`, `Type{`, `Type(`) is the LAST token on a line, it opens an indented block:
 ul [
- b[1 Space = 1 Quantum of Depth] — Every child line is indented by strictly 1 leading space (` `) relative to its parent.
- b[Dedent Auto-Closure] — Dedenting on a non-blank line automatically closes all blocks deeper than the new indentation level. Explicit closing brackets and trailing end-of-line commas are NEVER used in block mode.
- b[Blank-Line Invariance] — Blank or whitespace-only lines never trigger a dedent; they are ignored inside `{}` and `()`, and act as paragraph separators inside `Md [` streams.
- b[Dot-Path Flattening (`a.b.c`)] — A dotted key `a.b.c {` unfolds into `{ a { b { c { ... } } } }` while requiring only a SINGLE 1-space indent on the next line.
+ b[Adaptive Indent Quantum (`Q = 1, 2, or 4`)] — The canonical indentation quantum is **1 space** (`Q = 1`). However, the parser dynamically detects `Q` (`1`, `2`, or `4` spaces) from the environment/file's first indented line, requiring `+Q` spaces per nesting depth thereafter.
+ b[Dedent Auto-Closure] — Dedenting on a non-blank line automatically closes all blocks (`[`, `{`, `(`, `#`) deeper than the new indentation level. Explicit closing brackets and trailing commas are NEVER used in block mode.
+ b[Blank-Line Invariance] — Blank lines never trigger a dedent; they are ignored inside `{` and `(`, and act as paragraph separators inside `Md[` and `#` blocks.
+ b[Dot-Path Flattening (`a.b.c`)] — A dotted key `a.b.c {` unfolds into `{ a { b { c { ... } } } }` while requiring only a SINGLE `+Q` indent on the next line.
 
 
-section AXIOM III: THE SYMMETRIC TRIAD (`[]` STREAM, `{}` FORM, `()` TUPLE)
+section AXIOM III: THE SYMMETRIC PENTAD (`[` STREAM, `{` FORM, `(` TUPLE, `"` RAW, `#` COMMENT)
 
-topic `[` Stream Mode (Sequential Flow, Outliner, Markup & Pipelines)
+Every non-scalar structure in `.rn` belongs to one of five symmetric modes, any of which can be constructed by attaching a `PascalCase` Type with NO space (`Type[`, `Type{`, `Type(`, `Type"`, `Type#`):
+
+topic 1. `[` Stream Mode (Sequential Flow, Outliner, Markup & Pipelines)
 Represents an ordered continuum of text, markup, or operations. Empty `[]` = empty stream.
 ul [
- b[Lines & Paragraphs] — In a raw Stream `[]`, each plain line at the same depth is a distinct item. Under the `Md` schema (`*.md.rn` or `Md [`), consecutive plain lines merge into paragraphs separated by blank lines.
- b[Outliner Recursion] — Indenting (`+1 space`) beneath a plain text line implicitly nests a child Stream `[]` under that line.
- b[Block Nodes] — A line is parsed as a structured Node if its prefix matches the Node grammar followed by a space-separated `[`, `{`, `(`, or Column-0 quote `(tag)?(N)?"` at the end of the line (or starts with a flat document tag in `*.md.rn`: `title`, `subtitle`, `part`, `section`, `topic`, `quote`).
- b[Inline Nodes & Escaping] — Inside text flow, `Identifier[` or `Identifier{Props}[` (with NO space before `{` or `[`) is ALWAYS parsed as an inline child node (`b[bold]`, `span{class hi}[text]`). Literal brackets are escaped via backticks `` `arr[0]` ``, quotes `"[raw]"`, or backslash (`\[`, `\]`).
+ b[Lines & Paragraphs] — In a raw Stream `[`, each plain line is a distinct item. Under the `Md` type (`*.md.rn` or `Md[`), consecutive plain lines merge into paragraphs, and flat prefix lines (`title`, `part`, `section`, `topic`, `quote`) are interpreted by `Md` as structural headings/blocks.
+ b[Outliner Recursion] — Indenting (`+Q` spaces) beneath a plain text line implicitly nests a child Stream `[` under that line.
+ b[Inline Nodes & Escaping] — Inside text flow, `Key[` or `Key{Props}(Slots)[` (with NO space before `{`, `(`, or `[`) is parsed as an inline node (`b[bold]`, `a(/docs)[links]`). Literal brackets are escaped via backticks `` `arr[0]` ``, quotes `"[raw]"`, or backslash (`\[`).
 
-topic `{` Form Mode (Key-Value Map / Object / Type Archetype)
-Maps `Key Payload` statements separated by `\n` (block) or `,` (inline). Empty `{}` = empty form.
+topic 2. `{` Form Mode (Key-Value Map / Object / Type Archetype)
+Maps `Key Value` statements separated by `\n` (block) or `,` (inline). Empty `{}` = empty form.
 ul [
- b[Case-Aware Empty Key Duality] — Inside a `snake_case` (data/instance) Form, a bare `Key` with no payload and no `& Source` evaluates to `null` (`None` in `.rl`). Inside a `PascalCase` (Type Archetype) Form in `.rl`, a bare `snake_case` `Key` defines an open generic slot `Key _T`.
+ b[Case-Aware Empty Key Duality] — Inside a `snake_case` (data/instance) Form, a bare `Key` with no payload evaluates to `None`. Inside a `PascalCase` (Type Archetype) Form in `.rl`, a bare `snake_case` `Key` defines an open generic slot `Key _T`.
 
-topic `(` Tuple Mode (1D Lists & 2D Relational Relations)
+topic 3. `(` Tuple Mode (1D Lists & 2D Relational Tables)
 Represents positional sequences or relational tables. Empty `()` = empty tuple.
 ul [
- b[1D List] — Inline `(a, b, c)` OR a block `(` where the first indented line contains NO top-level commas outside quotes/brackets (strictly one item per line; items with literal commas must be quoted `"Hello, world!"`).
- b[2D Relational Table] — A block `(` where the first indented line contains at least one top-level comma defining the header columns (use a trailing comma `col,` for a 1-column table). Each subsequent line is a comma-separated row mapped to those headers (empty cells `, ,` evaluate to `null` / `None`). In `.rl`, a 2D Tuple natively constructs a typed `Tuple` of `Form` records.
+ b[1D List] — Inline `(a, b, c` OR a block `(` where the first indented line contains NO top-level commas (one item per line; items with literal commas are quoted `"Hello, world!"`).
+ b[2D Relational Table] — A block `(` where the first indented line contains at least one top-level comma defining the header columns (`col,` for 1 column). Subsequent lines are comma-separated rows mapped to those headers (empty cells `, ,` evaluate to `None`).
+
+topic 4. `"` Raw Mode (Inline Quoted & Column-0 Multiline Strings)
+ul [
+ b[Inline Quoted (`"..."`)] — Same-line UTF-8 string supporting `\"`, `\\`, `\n`, `\t`, `\{`, and `{expr}` interpolation in `.rl`.
+ b[Column-0 Multiline (`(Type)?(N)?"`)] — An opening `"` at the end of a line (`"`, `Ts"`, `Sh"`, `Sql"`, `1"`, `Rn2"`) suspends indentation until a matching `"(N)?` (`"`, `"1`, `"2`) placed strictly alone at Column 0. Every leading space inside is 100% literal, with zero escape processing.
+ b[Case-Flexible Formatter Normalization] — Canonical Type constructors are `PascalCase` (`Json"`, `Ts"`, `Sql(`, including user-defined types). If a user writes lowercase `json"` or `ts"`, the parser accepts it and the formatter normalizes it to `Json"` / `Ts"`.
+
+topic 5. `#` Comment Mode (Inline & Block Homoiconic Documentation)
+Obeys the exact same Inline vs. Block topological rule as `[`, `{`, `(`:
+ul [
+ b[Inline Comment (`# text`)] — A `# ` (hash followed by space) outside quotes starts a comment that auto-closes at `\n` and attaches to the AST node. Unspaced tokens like `#42` or `#111111` are literal scalars.
+ b[Block Comment (`#` at EOL)] — A bare `#` at the end of a line opens an indented multiline comment block (`+Q` spaces) that automatically closes on dedent — requiring zero `#` prefixes on inner lines and zero closing tokens!
 
 
-section AXIOM IV: LEXICON, AUTO-TYPED SCALARS & COLUMN-0 STRINGS
+section AXIOM IV: LEXICON & UNIFIED `None`
 
-topic Homoiconic Comments (`# `)
-A `# ` (hash followed by a space, or a bare `#` at the end of a line) outside quotes and preceded by start-of-line or whitespace starts a comment attached to the AST node for doc generation. Unspaced tokens like `#42` or `#111111` are treated as literal scalars/text.
-
-topic Scalar Auto-Typing (inside `{}` and `()`)
+topic Scalar Auto-Typing (inside `{` and `(`)
 lexicon_table (
  Token Pattern, Examples, Ontological Type & Semantics
  Boolean, `true` / `false`, `Bool`
- Null / Empty, `null` / `None` / bare key / `, ,`, `Null` (`None` in `.rl`)
+ Unified None, `None` / bare key / `, ,`, `None` (the single universal absence value; serializes to `null` in JSON/SQL)
  Numeric, `8080` / `-3.14` / `0xFF` / `1e-5`, `Int` / `Float` / `Byte` (multi-dot `0.1.0` falls back to String)
  Symbol, `'pk` / `'not_null` / `'GET`, O(1) interned tag (no closing quote; serializes to `"pk"` in JSON)
- Typed Literal, `Date"2026-03-30"` / `Money"19.99"`, `Type` or tag attached directly to `"..."` (desugars to `Type("...")` in `.rl`)
- Unquoted String, `postgres` / `/app` / `8px` / `#111111`, Any raw text after `Key ` up to `\n` (in block `{}`) or `,` (in `()` / inline `{}`)
- Quoted String, `"Hello, world!"` / `""` / `".btn"`, UTF-8 string. Supports `\"`, `\\`, `\n`, `\t`, `\{`, and `{expr}` interpolation in `.rl`
-
-topic Column-0 Multiline Raw Strings (`(tag)?(N)?"`)
-An opening `(tag)?(N)?"` at the end of a line (`"`, `ts"`, `sh"`, `Sql"`, `1"`, `rn2"`) suspends indentation topology until a matching `"(N)?` (`"`, `"1`, `"2`) placed strictly alone on its own line at Column 0:
-ul [
- b[Column-0 Invariance] — Content starts strictly at Column 0. Every leading space is 100% literal text, and zero escape sequences or `{expr}` interpolations are processed. The first `\n` after the opening quote and the last `\n` before the closing quote are stripped.
- b[Tag & Delimiter Rank (`tag`, `N`)] — Optional `tag` binds a language/type constructor; optional rank `N` (`1`, `2`, `3`...) prevents inner Column-0 quotes of lower rank from closing the outer string.
+ Type Constructor, `Date"2026-03-30"` / `Point(10, 20` / `User{id 1`, `PascalCase` Type attached directly to `"`, `(`, `{`, `[` with NO space
+ Unquoted String, `postgres` / `/app` / `8px` / `#111111`, Any raw text after `Key ` up to `\n` (in block `{`) or `,` (in `(` / inline `{`)
+ Quoted String, `"Hello, world!"` / `""` / `".btn"`, Inline escaped string or Column-0 multiline block
 
 
-section AXIOM V: UNIFIED NODE GRAMMAR, ALGEBRA & SCHEMA PORTALS
+section AXIOM V: THE SPACE LAW (KEY vs. TYPE CONSTRUCTOR) & ALGEBRA
 
-Every structured Node in both `.rn` (Layer 0) and `.rl` (Layer 1) obeys one universal grammar:
+Every statement in `.rn` and `.rl` obeys a strict, unambiguous separation between **Key/Variable** (left of space) and **Value/Constructor** (right of space):
 
 code 1"
-Node ::= Key({Props})?((Slots))? (Algebra)* (Schema)? (" " Payload)?
+Node  ::= Key({Props})?((Slots))? (Algebra)* (" " Value)?
+Value ::= (Type)? ( "[" ... | "{" ... | "(" ... | "\"" ... | "#" ... ) | Scalar
 "1
 
 ul [
- b[`Key`] — Unquoted identifier (`[a-zA-Z0-9_][a-zA-Z0-9_-]*`, including numeric keys like `200`), Dot-Path (`a.b.c`), `'symbol`, or `"quoted"` (when containing spaces or starting with `.` / `&` / `#`).
- b[`{Props}` & `(Slots)`] — Optional inline metadata Form `{...}` or positional Tuple `(...)` attached directly to `Key` with NO leading space: `div{id main} [...]`, `Button{variant 'primary}(label) [...]`.
- b[`Algebra` (Set & Lineage Operators)] — Space-surrounded operators (` & `, ` ^ `, ` / `) applied before the payload:
-  `Target & Source` — Deep-merges all fields from `Source` (Identifier or Dot-Path) into `Target` left-to-right (`Target & S1 & S2`). Omitting `{}` clones the merged value directly (`port & config.default_port`).
-  `Target ^ Source` — Symmetric difference (retains only keys present in `Target` or `Source`, but not both).
-  `Target & Source / key` — Strips `key` (identifier, `'symbol`, or dotted `a.b`) from the inherited Form (`Target & Source / k1 / k2`).
- b[`Schema` Portal] — An optional `PascalCase` token placed AFTER `Key` (and `Algebra`) and BEFORE `{`, `(`, `[` binds a schema adapter (written in `.rl`) to that subtree (`styles Scss {`, `query Sql (`, `view Html [`). Without a trailing bracket (`id Uuid`), a `PascalCase` token is a scalar value in `.rn` or a field type in `.rl`.
- b[`Payload`] — Space-separated block (`{}`, `()`, `[]`), Column-0 string (`(tag)?(N)?"`), scalar `Value`, or empty.
-
-topic Isomorphic Bridge (`.rn` <-> `.rl` Zero-Rewrite Upgrade)
-Because `.rn` is strictly isomorphic to Layer 0 of `.rl`, any static `.rn` file can be upgraded into a reactive `.rl` module without changing a single bracket: attaching `& [ .port > 1024 ]` adds a compile-time Noether validation invariant, and replacing a static value with `[ base.port + 10 ]` turns it into a lazy computed lens.
+ b[The Space Law (`Key Value` vs. `Type{`)] — A space separates a variable/field name from its value, whereas a Type Constructor attaches directly to its delimiter with **NO space**:
+  `env { A 1` — key `env` assigned an untyped Form `{`
+  `styles Scss{` — key `styles` assigned a `Scss`-constructed Form `Scss{`
+  `query Sql(` — key `query` assigned a `Sql`-constructed Tuple `Sql(`
+  `view Html[` — key `view` assigned an `Html`-constructed Stream `Html[`
+  `code Ts"` — key `code` assigned a `Ts`-constructed Raw string `Ts"`
+  `created_at Date"12.12.23"` — key `created_at` assigned a `Date`-constructed literal
+ b[Algebraic Inheritance (` & `, ` ^ `, ` / `)] — Space-surrounded operators combine Forms or Types before the value:
+  `Target & Source {` — Deep-merges all fields from `Source` (Identifier, Type, or Dot-Path) into `Target` left-to-right (` MyObject & Object {`). Omitting `{` clones the value directly (`backup_timeout & base.timeout`).
+  `Target ^ Source {` — Symmetric difference (retains only keys present in `Target` or `Source`, but not both).
+  `Target & Source / key {` — Strips `key` (identifier, `'symbol`, or dotted `a.b`) from the inherited Form (`Target & Source / k1 / k2 {`).
 
 
 part CANONICAL EXAMPLES (VERIFYING EVERY AXIOM)
 
-section PLAIN TEXT & OUTLINER NOTES (Axiom I & III — Stream Root + Outliner)
+section 1. PLAIN TEXT, OUTLINER & BLOCK COMMENTS (Axiom I & III)
 example {
- input rn"
+ input Rn"
+#
+ Multiline block comment!
+ Indented by +Q space, auto-closed on dedent.
 how my day?
  good
-todo list
+todo list # inline comment
  a
  b
  c
 "
- output json"
+ output Json"
 [
   { "text": "how my day?", "children": ["good"] },
   { "text": "todo list", "children": ["a", "b", "c"] }
 ]
 "
 
-section MARKDOWN DOCUMENT (`*.md.rn` — Flat Headings, Inline Nodes & 2D Tables)
+section 2. MARKDOWN DOCUMENT (`*.md.rn` — `Md` Type, Auto-Close & `Ts"`)
 example {
- input rn2"
+ input Rn2"
 title Razomy Guide
 
-Fast b[zero-noise] notation a(/docs)[links], with span{class highlight}[inline] tags and `arr[0]` code.
+Fast b[zero-noise] rn a(/docs)[links], with span{class highlight}[inline] tags and `arr[0]` code.
 
 ul [
  No closing tags
- 1-space indentation
+ Adaptive 1, 2, or 4 space indentation
 
 benchmarks (
  Format, Tokens, Notes
  JSON,   140,    "Verbose, requires quotes"
  RN,     48,     "Ultra-compact, lean parser"
 
-code ts"
+code Ts"
 const x = 42;
 function hello() {
   return x;
 }
 "
 "2
- output md"
+ output Md"
 # Razomy Guide
 
-Fast **zero-noise** notation with <span class="highlight">inline</span> tags and `arr[0]` code.
+Fast **zero-noise** rn [links](/docs), with <span class="highlight">inline</span> tags and `arr[0]` code.
 
 - No closing tags
-- 1-space indentation
+- Adaptive 1, 2, or 4 space indentation
 
 | Format | Tokens | Notes                      |
 | ------ | ------ | -------------------------- |
@@ -174,28 +202,29 @@ function hello() {
 ```
 "
 
-section HTML DOM TREE (Axiom V — Attached `{Props}` + Stream `[`)
+section 3. HTML DOM TREE (Axiom II & V — Attached `{Props}` + Auto-Closed `[`)
 example {
- input rn"
+ input Rn"
 article{id post, class featured, lang en} [
- h1 [ Why Razomy? ]
- p [ Read the a{href /docs, target _blank}[documentation]. ]
+ h1 [ Why Razomy?
+ p [ Read the a{href /docs, target _blank}[documentation].
 "
- output html"
+ output Html"
 <article id="post" class="featured" lang="en">
   <h1>Why Razomy?</h1>
   <p>Read the <a href="/docs" target="_blank">documentation</a>.</p>
 </article>
 "
 
-section JSON / YAML CONFIG (Axiom II & IV — Dot-Path, Duality & Col-0 Strings)
+section 4. JSON / YAML CONFIG (Axiom II & IV — Dot-Path, `None` & Col-0 Strings)
 example {
- input rn2"
+ input Rn2"
 cluster.primary.database {
  engine postgres
  port 5432
  created_at Date"12.12.23"
  token
+ fallback None
  empty_str ""
  extra_tags ()
  welcome_msg 1"
@@ -206,7 +235,7 @@ Line 1 starts at Column 0 (zero ambiguity with parent indentation!).
   Check replication lag
   Promote primary node
 "2
- output json"
+ output Json"
 {
   "cluster": {
     "primary": {
@@ -215,6 +244,7 @@ Line 1 starts at Column 0 (zero ambiguity with parent indentation!).
         "port": 5432,
         "created_at": "12.12.23",
         "token": null,
+        "fallback": null,
         "empty_str": "",
         "extra_tags": [],
         "welcome_msg": "Line 1 starts at Column 0 (zero ambiguity with parent indentation!).\n  Line 2 has exactly 2 leading spaces of actual text content.",
@@ -228,21 +258,21 @@ Line 1 starts at Column 0 (zero ambiguity with parent indentation!).
 }
 "
 
-section RELATIONAL SCHEMA & TABULAR DATA (Axiom III & IV — 2D Tuple & Symbols)
+section 5. RELATIONAL SCHEMA & TABULAR DATA (2D Tuple, `'symbol` & `None`)
 example {
- input rn"
+ input Rn"
 users_schema (
  column, type, constraint, default
  id,     Uuid, 'pk,        gen_uuid
- org_id, Uuid, Orgs.id,    null
+ org_id, Uuid, Orgs.id,    None
  role,   Text, 'not_null,  member
 
 users_rows (
  id,  org_id, role,   created_at
  u_1, o_10,   admin,  Date"12.12.23"
- u_2, o_10,   member, Date"13.12.23"
+ u_2, ,       member, Date"13.12.23"
 "
- output sql"
+ output Sql"
 CREATE TABLE users (
   id     UUID PRIMARY KEY DEFAULT gen_uuid(),
   org_id UUID REFERENCES Orgs(id) DEFAULT NULL,
@@ -250,18 +280,18 @@ CREATE TABLE users (
 );
 INSERT INTO users (id, org_id, role, created_at) VALUES
   ('u_1', 'o_10', 'admin', '12.12.23'),
-  ('u_2', 'o_10', 'member', '13.12.23');
+  ('u_2', NULL, 'member', '13.12.23');
 "
 
-section CSS / SCSS STYLES (Axiom IV — Unquoted Hex/Units & Quoted Keys)
+section 6. CSS / SCSS STYLES (Auto-Closed Inline `(` & `{`)
 example {
- input rn"
+ input Rn"
 ".btn" {
  background-color #111111
- padding (8px, 16px)
- "&:hover" { background-color #222222 }
+ padding (8px, 16px
+ "&:hover" { background-color #222222
 "
- output scss"
+ output Scss"
 .btn {
   background-color: #111111;
   padding: 8px 16px;
@@ -271,18 +301,18 @@ example {
 }
 "
 
-section DOCKER & TERRAFORM INFRASTRUCTURE (Dot-Path, Form & Col-0)
+section 7. DOCKER & TERRAFORM INFRASTRUCTURE (Auto-Closed Inline + `Sh1"`)
 example {
- input rn2"
+ input Rn2"
 container {
  from node:22-alpine
  workdir /app
- copy (., /app)
- run sh1"
+ copy (., /app
+ run Sh1"
 npm ci --omit=dev
 "1
- env { NODE_ENV production, PORT 8080 }
- cmd (node, server.js)
+ env { NODE_ENV production, PORT 8080
+ cmd (node, server.js
 
 resource.aws_s3_bucket.logs {
  bucket my-corp-logs
@@ -291,7 +321,7 @@ resource.aws_s3_bucket.logs {
   enabled true
   days 90
 "2
- output tf"
+ output Tf"
 # Dockerfile:
 FROM node:22-alpine
 WORKDIR /app
@@ -313,20 +343,20 @@ resource "aws_s3_bucket" "logs" {
 }
 "
 
-section ALGEBRAIC INHERITANCE (Axiom V — `&` Merge & `/` Strip)
+section 8. ALGEBRAIC INHERITANCE (Axiom V — `&` Merge & `/` Strip)
 example {
- input rn"
+ input Rn"
 mesh {
  ingress {
-  to (auth, api)
+  to (auth, api
   protocol grpc
   tls true
- base { timeout 30, retries 3, debug true }
+ base { timeout 30, retries 3, debug true
  prod & base / debug {
   replicas 5
  backup_timeout & base.timeout
 "
- output json"
+ output Json"
 {
   "mesh": {
     "ingress": { "to": ["auth", "api"], "protocol": "grpc", "tls": true },
@@ -337,35 +367,83 @@ mesh {
 }
 "
 
-section MULTI-SCHEMA COMPONENT PORTALS (Axiom V — `Key Schema` Portals)
+section 9. MULTI-TYPE COMPONENT CONSTRUCTORS (Attached `Sql(`, `Html[`, `Scss{`)
 example {
- input rn"
+ input Rn"
 UserCard {
  props {
   id Uuid
   theme dark
 
- query Sql (
+ query Sql(
   select, from,  where
   "*",    users, "id = :id"
 
- view Html [
+ view Html[
   div{class card} [
-   h2 [ User Profile ]
-   p [ Welcome back! ]
+   h2 [ User Profile
+   p [ Welcome back!
 
- styles Scss {
+ styles Scss{
   ".card" {
    background-color #111111
-   "&:hover" { background-color #222222 }
+   "&:hover" { background-color #222222
 "
- output json"
+ output Json"
 {
   "UserCard": {
     "props": { "id": "Uuid", "theme": "dark" },
     "query": "SELECT * FROM users WHERE id = :id;",
     "view": "<div class=\"card\"><h2>User Profile</h2><p>Welcome back!</p></div>",
     "styles": ".card { background-color: #111111; }\n.card:hover { background-color: #222222; }"
+  }
+}
+"
+
+section 10. JSON SCHEMA & UI FORM ARCHETYPE
+example {
+ input Rn"
+# 1. Define the Schema / UI Form Type (PascalCase)
+UserForm {
+ username Str(3, 20){label "Username", pattern "^[a-z0-9_]+$"}
+ email    Email{label "Work Email", placeholder "name@company.com"}
+ age      Int(18, 120){label "Age", default 25}
+ role     Enum('admin, 'editor, 'viewer){label "Role", default 'viewer, widget 'radio}
+ bio      Str(0, 500){label "Bio", widget 'textarea, default None}
+ tags     List(Str){min_items 1, max_items 5, unique true}
+ address {
+  city    Str{label "City"}
+  zip     Str(5, 10){default None}
+
+# 2. Instantiate & Validate Data against UserForm
+valid_user UserForm{
+ username alex_razomy
+ email    alex@razomy.org
+ role     'admin
+ tags     (rust, ontology, rn
+ address  { city Kyiv
+"
+ output Json"
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UserForm",
+  "type": "object",
+  "required": ["username", "email", "tags", "address"],
+  "properties": {
+    "username": { "type": "string", "minLength": 3, "maxLength": 20, "pattern": "^[a-z0-9_]+$", "title": "Username" },
+    "email":    { "type": "string", "format": "email", "title": "Work Email", "placeholder": "name@company.com" },
+    "age":      { "type": "integer", "minimum": 18, "maximum": 120, "default": 25, "title": "Age" },
+    "role":     { "type": "string", "enum": ["admin", "editor", "viewer"], "default": "viewer", "title": "Role", "ui:widget": "radio" },
+    "bio":      { "type": ["string", "null"], "minLength": 0, "maxLength": 500, "default": null, "title": "Bio", "ui:widget": "textarea" },
+    "tags":     { "type": "array", "items": { "type": "string" }, "minItems": 1, "maxItems": 5, "uniqueItems": true },
+    "address": {
+      "type": "object",
+      "required": ["city"],
+      "properties": {
+        "city": { "type": "string", "title": "City" },
+        "zip":  { "type": ["string", "null"], "minLength": 5, "maxLength": 10, "default": null }
+      }
+    }
   }
 }
 "
